@@ -144,12 +144,18 @@
       viewerTitle.textContent = `${card.title}  ${showingBack ? 'Back' : 'Front'}`;
     }
 grid.addEventListener('click', e => {
-      const btn = e.target.closest('.thumb');
-      if (!btn) return;
-      viewerImg.src = btn.dataset.src;
-      viewerTitle.textContent = btn.dataset.title;
-      if (viewer.showModal) viewer.showModal(); else viewer.setAttribute('open', '');
-    });
+  const btn = e.target.closest('.thumb');
+  if (!btn) return;
+  currentCardIndex = Number(btn.dataset.index);
+  showingBack = false;
+  showCardImage();
+  if (viewer.showModal) viewer.showModal(); else viewer.setAttribute('open', '');
+});
+
+    flipBtn.addEventListener('click', () => {
+  showingBack = !showingBack;
+  showCardImage();
+});
 
     document.getElementById('closeBtn').addEventListener('click', () => viewer.close());
     viewer.addEventListener('click', e => { if (e.target === viewer) viewer.close(); });
