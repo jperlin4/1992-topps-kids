@@ -90,9 +90,12 @@
 
   <dialog id="viewer">
     <div class="modal">
-      <div class="modalBar">
+        <div class="modalBar">
         <strong id="viewerTitle">Card</strong>
-        <button class="closeBtn" id="closeBtn">Close</button>
+        <div>
+          <button class="closeBtn" id="flipBtn" type="button">Front / Back</button>
+          <button class="closeBtn" id="closeBtn" type="button">Close</button>
+        </div>
       </div>
       <div class="modalImgWrap"><img id="viewerImg" alt="Expanded baseball card"></div>
     </div>
@@ -101,11 +104,15 @@
   <script>
     const totalCards = 132;
     const signedCards = 112;
-    const cards = Array.from({length: totalCards}, (_, i) => ({
-      number: i + 1,
-      title: `Card ${String(i + 1).padStart(3, '0')}`,
-      image: `https://via.placeholder.com/900x1260/efefef/111111?text=Card+${String(i + 1).padStart(3, '0')}`
-    }));
+    const cards = Array.from({ length: totalCards }, (_, i) => {
+      const id = String(i + 1).padStart(3, '0');
+      return {
+        number: i + 1,
+        title: `Card ${id}`,
+        front: `images/1992-topps-kids-${id}-front.jpg`,
+        back: `images/1992-topps-kids-${id}-back.jpg`
+      };
+    });
 
     const grid = document.getElementById('grid');
     const fill = document.getElementById('fill');
@@ -114,6 +121,7 @@
     const viewer = document.getElementById('viewer');
     const viewerImg = document.getElementById('viewerImg');
     const viewerTitle = document.getElementById('viewerTitle');
+    const flipBtn = document.getElementById('flipBtn');
 
     const pct = (signedCards / totalCards) * 100;
     fill.style.width = pct.toFixed(1) + '%';
@@ -121,13 +129,21 @@
     remainingText.textContent = `${totalCards - signedCards} remaining`;
 
     grid.innerHTML = cards.map(c => `
-      <button class="thumb" data-src="${c.image}" data-title="${c.title}" aria-label="Open ${c.title}">
+      <button class="thumb" data-index="${c.number - 1}" aria-label="Open ${c.title}">
         <span class="badge">${c.number}</span>
-        <img src="${c.image}" alt="${c.title}">
+        <img src="${c.front}" alt="${c.title} front">
       </button>
     `).join('');
 
-    grid.addEventListener('click', e => {
+    let currentCardIndex = 0;
+    let showingBack = false;
+
+    function showCardImage() {
+      const card = cards[currentCardIndex];
+      viewerImg.src = showingBack ? card.back : card.front;
+      viewerTitle.textContent = `${card.title}  ${showingBack ? 'Back' : 'Front'}`;
+    }
+grid.addEventListener('click', e => {
       const btn = e.target.closest('.thumb');
       if (!btn) return;
       viewerImg.src = btn.dataset.src;
