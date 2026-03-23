@@ -56,10 +56,7 @@
     <header>
       <h1>Lineup Cards</h1>
       <div class="sub"><a href="index.html">Home</a> | <a href="topps-kids.html">1992 Topps Kids</a></div>
-        <span>Minimal single-page collection display</span>
-        <span>White background</span>
-        <span>Black text</span>
-        <span>Mobile-first responsive grid</span>
+        <span>A collecting of dugout and batting order cards from attended baseball games</span>
       </div>
     </header>
 
@@ -72,6 +69,7 @@
   <button class="filter-btn" data-filter="mlb">MLB</button>
   <button class="filter-btn" data-filter="milb">MiLB</button>
   <button class="filter-btn" data-filter="ncaa">NCAA</button>
+  <button class="filter-btn" data-filter="ncaa">Other</button>
 </div>
       <div class="hint">Add games to <code>games</code> array. Example: { title: "Team A vs Team B", images: ["img1.jpg", "img2.jpg"] }</div>
       <div class="hint">Click to enlarge; Prev/Next cycles multiple images per game.</div>
@@ -101,9 +99,9 @@
     
 const games = [
   {
-    title: "UConn vs Yale - Mar 15, 2026",
+    title: "Sacred Heart vs Fairfield - May 23, 2025 (MAAC Tournament)",
     level: "ncaa",
-    images: ["images/lineup-uconn-yale-1.jpg"]
+    images: ["images/batting_2025-05-23-FU.jpg", "images/batting_2025-05-23-SHU.jpg"]
   },
   {
     title: "Yankees vs Red Sox - Jul 20, 2025",
