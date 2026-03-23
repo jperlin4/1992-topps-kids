@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lineup Cards - BallparkStuff.com</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    header { text-align: center; margin-bottom: 20px; }
+    h1 { font-size: 2.5em; margin-bottom: 10px; }
+    nav { margin-bottom: 20px; }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+    nav a:hover { text-decoration: underline; }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+      font-size: 1.1em;
+    }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+    .filter-btn.active {
+      background: #fff;
+      color: #000;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+    }
+    .game-tile {
+      background: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .game-tile:hover { transform: scale(1.02); }
+    .game-thumb {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: #111;
+    }
+    .game-caption {
+      padding: 15px;
+      font-weight: bold;
+    }
+    .game-caption small { color: #aaa; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 1000;
+    }
+    .modal.open {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      max-width: 90%;
+      max-height: 90%;
+      position: relative;
+    }
+    .carousel-img {
+      max-width: 800px;
+      max-height: 600px;
+      object-fit: contain;
+    }
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.3);
+      border: none;
+      color: #fff;
+      font-size: 2em;
+      cursor: pointer;
+      padding: 10px;
+    }
+    .carousel-prev { left: 10px; }
+    .carousel-next { right: 10px; }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    .modal-caption {
+      text-align: center;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2em; }
+      .stats {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Lineup Cards</h1>
+    <nav>
+      <a href="topps-kids.html">← 92 Topps Kids</a>
+      <a href="index.html">Home</a>
+    </nav>
+  </header>
+
+  <div class="stats">
+    <div>Unique team lineup cards: <span id="uniqueTeams">12</span></div>
+  </div>
+
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="MLB">MLB</button>
+    <button class="filter-btn" data-filter="MiLB">MiLB</button>
+    <button class="filter-btn" data-filter="NCAA DI">NCAA DI</button>
+    <button class="filter-btn" data-filter="NCAA DIII">NCAA DIII</button>
+    <button class="filter-btn" data-filter="Summer Collegiate">Summer Collegiate</button>
+  </div>
+
+  <div class="grid" id="grid">
+    <!-- Games populated by JS -->
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeBtn">×</button>
+      <img class="carousel-img" id="modalImg" src="" alt="">
+      <button class="carousel-nav carousel-prev" id="prevBtn">‹</button>
+      <button class="carousel-nav carousel-next" id="nextBtn">›</button>
+      <div class="modal-caption" id="modalCaption"></div>
+    </div>
+  </div>
+
+  <script>
+    // EDIT THIS ARRAY WITH YOUR REAL GAMES
+    const games = [
+      {
+        id: 1,
+        date: '2026-03-15',
+        teams: 'UConn vs Yale',
+        filter: 'NCAA DI',
+        images: [
+          'images/uconn-yale-2026-03-15-dugout.jpg',
+          'images/uconn-yale-2026-03-15-lineup.jpg'
+        ]
+      },
+      {
+        id: 2,
+        date: '2026-03-10',
+        teams: 'Yale vs Harvard',
+        filter: 'NCAA DIII',
+        images: [
+          'images/yale-harvard-dugout-large.jpg'
+        ]
+      },
+      {
+        id: 3,
+        date: '2025-07-20',
+        teams: 'NY Yankees vs Boston Red Sox',
+        filter: 'MLB',
+        images: [
+          'images/yankees-sox-dugout.jpg',
+          'images/yankees-sox-lineup1.jpg',
+          'images/yankees-sox-lineup2.jpg'
+        ]
+      }
+      // Add more game objects here.
+    ];
+
+    const grid = document.getElementById('grid');
+    const filters = document.getElementById('filters');
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const modalCaption = document.getElementById('modalCaption');
+    const closeBtn = document.getElementById('closeBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    let currentGame = null;
+    let currentImgIndex = 0;
+
+    function renderGrid(activeFilter = 'all') {
+      grid.innerHTML = '';
+      games
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .filter(game => activeFilter === 'all' || game.filter.includes(activeFilter))
+        .forEach(game => {
+          const tile = document.createElement('div');
+          tile.className = 'game-tile';
+          tile.onclick = () => openModal(game);
+          tile.innerHTML = `
+            <img class="game-thumb"
+                 src="${game.images[0]}"
+                 alt="${game.teams}"
+                 onerror="this.src='images/placeholder.jpg'">
+            <div class="game-caption">
+              ${game.teams}<br>
+              <small>${game.date}</small>
+            </div>
+          `;
+          grid.appendChild(tile);
+        });
+    }
+
+    function openModal(game) {
+      currentGame = game;
+      currentImgIndex = 0;
+      showCurrentImg();
+      modal.classList.add('open');
+    }
+
+    function showCurrentImg() {
+      modalImg.src = currentGame.images[currentImgIndex];
+      modalCaption.textContent = `${currentGame.teams} - ${currentGame.date}`;
+    }
+
+    function nextImg() {
+      currentImgIndex = (currentImgIndex + 1) % currentGame.images.length;
+      showCurrentImg();
+    }
+
+    function prevImg() {
+      currentImgIndex =
+        (currentImgIndex - 1 + currentGame.images.length) %
+        currentGame.images.length;
+      showCurrentImg();
+    }
+
+    filters.addEventListener('click', (e) => {
+      if (e.target.classList.contains('filter-btn')) {
+        document
+          .querySelectorAll('.filter-btn')
+          .forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+        renderGrid(e.target.dataset.filter);
+      }
+    });
+
+    closeBtn.onclick = () => modal.classList.remove('open');
+    prevBtn.onclick = prevImg;
+    nextBtn.onclick = nextImg;
+    modal.onclick = (e) => {
+      if (e.target === modal) modal.classList.remove('open');
+    };
+
+    renderGrid();
+  </script>
+</body>
+</html>
