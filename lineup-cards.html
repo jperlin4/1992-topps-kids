@@ -1,297 +1,203 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lineup Cards - BallparkStuff.com</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #000;
-      color: #fff;
-      line-height: 1.6;
-      padding: 20px;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-    header { text-align: center; margin-bottom: 20px; }
-    h1 { font-size: 2.5em; margin-bottom: 10px; }
-    nav { margin-bottom: 20px; }
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: bold;
-    }
-    nav a:hover { text-decoration: underline; }
 
-    .stats {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-bottom: 20px;
-      font-size: 1.1em;
-    }
+:root { --bg:#fff; --fg:#111; --muted:#666; --line:#e8e8e8; --shadow: 0 20px 60px rgba(0,0,0,.15); }
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+.wrap { max-width: 1400px; margin: 0 auto; padding: 28px 18px 56px; }
+header { display:flex; flex-direction:column; gap:14px; padding-bottom:20px; border-bottom:1px solid var(--line); }
+h1 { margin:0; font-family: 'Cormorant Garamond', Georgia, serif; font-size: clamp(2.3rem, 4vw, 4.4rem); font-weight:600; letter-spacing:.02em; line-height:1.02; }
+.sub { display:flex; flex-wrap:wrap; gap:10px 18px; color:var(--muted); font-size:.95rem; }
+.panel { display:grid; grid-template-columns: 1.4fr .8fr; gap:18px; margin-top:18px; }
+.cardbox, .statsbox { border:1px solid var(--line); border-radius:18px; padding:18px; }
+.progressTop { display:flex; justify-content:space-between; gap:12px; align-items:baseline; margin-bottom:10px; }
+.progressTop strong { font-size:1.1rem; }
+.meter { height:12px; border:1px solid #ccc; border-radius:999px; overflow:hidden; background:#fafafa; }
+.fill { height:100%; width:84.85%; background:#111; }
+.metaRow { display:flex; justify-content:space-between; color:var(--muted); font-size:.9rem; margin-top:8px; }
+.stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+.stat { border:1px solid var(--line); border-radius:14px; padding:12px; }
+.stat label { display:block; font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+.stat input { width:100%; border:0; outline:none; font: inherit; font-size:1.1rem; background:transparent; color:var(--fg); padding:0; }
+.toolbar { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:18px; margin-bottom:14px; }
+.toolbar .hint { color:var(--muted); font-size:.92rem; }
+.grid { display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:14px; }
+.thumb { position:relative; aspect-ratio: 2.5 / 3.5; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#f7f7f7; cursor:zoom-in; padding:0; }
+.thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.badge { position:absolute; left:10px; top:10px; background:rgba(255,255,255,.85); backdrop-filter: blur(6px); color:#111; font-size:.75rem; padding:5px 8px; border-radius:999px; border:1px solid rgba(0,0,0,.08); }
+dialog { border:0; padding:0; background:transparent; max-width:min(94vw, 980px); width:100%; }
+dialog::backdrop { background: rgba(0,0,0,.72); }
+.modal { background:#fff; border-radius:18px; overflow:hidden; box-shadow:var(--shadow); }
+.modalBar { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--line); }
+.closeBtn { border:1px solid var(--line); background:#fff; color:#111; border-radius:999px; padding:8px 12px; cursor:pointer; font:inherit; }
+.modalImgWrap { width:100%; background:#111; display:flex; align-items:center; justify-content:center; }
+.modalImgWrap img { display:block; width:100%; height:auto; max-height:80vh; object-fit:contain; }
+.footer { margin-top:18px; color:var(--muted); font-size:.88rem; border-top:1px solid var(--line); padding-top:16px; }
+@media (max-width: 1100px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .panel { grid-template-columns:1fr; } }
+@media (max-width: 720px) { .wrap { padding:18px 12px 42px; } .grid { grid-template-columns: 1fr; gap:12px; } .stats { grid-template-columns:1fr; } .toolbar { flex-direction:column; align-items:flex-start; } }
 
-    .filters {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-    .filter-btn {
-      background: #333;
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 0.9em;
-    }
-    .filter-btn.active {
-      background: #fff;
-      color: #000;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 20px;
-    }
-    .game-tile {
-      background: #222;
-      border-radius: 10px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .game-tile:hover { transform: scale(1.02); }
-    .game-thumb {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      background: #111;
-    }
-    .game-caption {
-      padding: 15px;
-      font-weight: bold;
-    }
-    .game-caption small { color: #aaa; }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
-      z-index: 1000;
-    }
-    .modal.open {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-content {
-      max-width: 90%;
-      max-height: 90%;
-      position: relative;
-    }
-    .carousel-img {
-      max-width: 800px;
-      max-height: 600px;
-      object-fit: contain;
-    }
-    .carousel-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,0.3);
-      border: none;
-      color: #fff;
-      font-size: 2em;
-      cursor: pointer;
-      padding: 10px;
-    }
-    .carousel-prev { left: 10px; }
-    .carousel-next { right: 10px; }
-
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #333;
-      color: #fff;
-      border: none;
-      padding: 10px;
-      cursor: pointer;
-      border-radius: 50%;
-    }
-
-    .modal-caption {
-      text-align: center;
-      margin-top: 10px;
-      font-style: italic;
-    }
-
-    @media (max-width: 768px) {
-      .grid { grid-template-columns: 1fr; }
-      h1 { font-size: 2em; }
-      .stats {
-        flex-direction: column;
-        gap: 10px;
-      }
-    }
+.game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; }
+.game-thumb { position: relative; height: 240px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #f7f7f7; cursor: pointer; }
+.game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.game-meta { padding: 14px; }
+.game-title { font-weight: 600; margin-bottom: 4px; }
+.game-date { color: var(--muted); font-size: .88rem; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0; }
+.filter-btn { border: 1px solid var(--line); background: #fafafa; border-radius: 999px; padding: 8px 16px; cursor: pointer; font-size: .88rem; transition: all 0.2s; }
+.filter-btn:hover { background: #f0f0f0; }
+.filter-btn.active { background: var(--fg); color: #fff; }
+.statsbox { grid-column: 1 / -1; }
+.quick-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.viewer { max-height: 92vh; }
+.viewer .modalImgWrap { height: 68vh; }
+@media (max-width: 720px) { .game-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Lineup Cards</h1>
-    <nav>
-      <a href="topps-kids.html">← 92 Topps Kids</a>
-      <a href="index.html">Home</a>
-    </nav>
-  </header>
+  <div class="wrap">
+    <header>
+      <h1>Lineup Cards</h1>
+      <div class="sub">
+        <a href="index.html">← Home</a>
+        <a href="topps-kids.html">92 Topps Kids</a>
+      </div>
+    </header>
 
-  <div class="stats">
-    <div>Unique team lineup cards: <span id="uniqueTeams">12</span></div>
-  </div>
+    <section class="panel">
+      <div class="statsbox">
+        <div class="progressTop">
+          <strong>Quick stats</strong><span class="hint" style="color:var(--muted);font-size:.85rem;">Editable</span>
+        </div>
+        <div class="quick-stats">
+          <div class="stat">
+            <label>Unique teams</label>
+            <input id="uniqueTeams" value="12">
+          </div>
+          <div class="stat">
+            <label>Total games</label>
+            <input id="totalGames" value="8">
+          </div>
+          <div class="stat">
+            <label>Dugout cards</label>
+            <input id="dugoutCards" value="6">
+          </div>
+          <div class="stat">
+            <label>Lineup cards</label>
+            <input id="lineupCards" value="14">
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <div class="filters" id="filters">
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="MLB">MLB</button>
-    <button class="filter-btn" data-filter="MiLB">MiLB</button>
-    <button class="filter-btn" data-filter="NCAA DI">NCAA DI</button>
-    <button class="filter-btn" data-filter="NCAA DIII">NCAA DIII</button>
-    <button class="filter-btn" data-filter="Summer Collegiate">Summer Collegiate</button>
-  </div>
-
-  <div class="grid" id="grid">
-    <!-- Games populated by JS -->
-  </div>
-
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <button class="close-btn" id="closeBtn">×</button>
-      <img class="carousel-img" id="modalImg" src="" alt="">
-      <button class="carousel-nav carousel-prev" id="prevBtn">‹</button>
-      <button class="carousel-nav carousel-next" id="nextBtn">›</button>
-      <div class="modal-caption" id="modalCaption"></div>
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="MLB">MLB</button>
+      <button class="filter-btn" data-filter="MiLB">MiLB</button>
+      <button class="filter-btn" data-filter="NCAA DI">NCAA DI</button>
+      <button class="filter-btn" data-filter="NCAA DIII">NCAA DIII</button>
+      <button class="filter-btn" data-filter="Summer Collegiate">Summer Collegiate</button>
     </div>
+
+    <main class="game-grid" id="grid"></main>
   </div>
+
+  <dialog id="viewer">
+    <div class="modal">
+      <div class="modalBar">
+        <strong id="viewerTitle">Game</strong>
+        <button class="closeBtn" id="closeBtn" type="button">Close</button>
+      </div>
+      <div class="modalImgWrap">
+        <img id="viewerImg" alt="Game card">
+      </div>
+    </div>
+  </dialog>
 
   <script>
-    // EDIT THIS ARRAY WITH YOUR REAL GAMES
     const games = [
       {
-        id: 1,
-        date: '2026-03-15',
-        teams: 'UConn vs Yale',
-        filter: 'NCAA DI',
-        images: [
-          'images/uconn-yale-2026-03-15-dugout.jpg',
-          'images/uconn-yale-2026-03-15-lineup.jpg'
-        ]
+        number: 1,
+        title: 'UConn vs Yale',
+        date: 'Mar 15, 2026',
+        level: 'NCAA DI',
+        images: ['images/uconn-yale-dugout.jpg', 'images/uconn-yale-lineup.jpg']
       },
       {
-        id: 2,
-        date: '2026-03-10',
-        teams: 'Yale vs Harvard',
-        filter: 'NCAA DIII',
-        images: [
-          'images/yale-harvard-dugout-large.jpg'
-        ]
+        number: 2,
+        title: 'Yale vs Harvard',
+        date: 'Mar 10, 2026',
+        level: 'NCAA DIII',
+        images: ['images/yale-harvard-dugout.jpg']
       },
       {
-        id: 3,
-        date: '2025-07-20',
-        teams: 'NY Yankees vs Boston Red Sox',
-        filter: 'MLB',
-        images: [
-          'images/yankees-sox-dugout.jpg',
-          'images/yankees-sox-lineup1.jpg',
-          'images/yankees-sox-lineup2.jpg'
-        ]
+        number: 3,
+        title: 'Yankees vs Red Sox',
+        date: 'Jul 20, 2025',
+        level: 'MLB',
+        images: ['images/yankees-dugout.jpg', 'images/yankees-lineup1.jpg']
       }
-      // Add more game objects here.
     ];
 
     const grid = document.getElementById('grid');
+    const viewer = document.getElementById('viewer');
+    const viewerImg = document.getElementById('viewerImg');
+    const viewerTitle = document.getElementById('viewerTitle');
     const filters = document.getElementById('filters');
-    const modal = document.getElementById('modal');
-    const modalImg = document.getElementById('modalImg');
-    const modalCaption = document.getElementById('modalCaption');
-    const closeBtn = document.getElementById('closeBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
 
     let currentGame = null;
-    let currentImgIndex = 0;
+    let currentImageIndex = 0;
 
     function renderGrid(activeFilter = 'all') {
       grid.innerHTML = '';
       games
+        .slice()
         .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .filter(game => activeFilter === 'all' || game.filter.includes(activeFilter))
+        .filter(game => activeFilter === 'all' || game.level === activeFilter)
         .forEach(game => {
-          const tile = document.createElement('div');
-          tile.className = 'game-tile';
-          tile.onclick = () => openModal(game);
-          tile.innerHTML = `
-            <img class="game-thumb"
-                 src="${game.images[0]}"
-                 alt="${game.teams}"
-                 onerror="this.src='images/placeholder.jpg'">
-            <div class="game-caption">
-              ${game.teams}<br>
-              <small>${game.date}</small>
+          const thumb = document.createElement('button');
+          thumb.className = 'game-thumb';
+          thumb.onclick = () => openViewer(game);
+          thumb.innerHTML = `
+            <img src="${game.images[0]}" alt="${game.title}" onerror="this.src='images/placeholder.jpg'">
+            <div class="game-meta">
+              <div class="game-title">${game.title}</div>
+              <div class="game-date">${game.date} • ${game.level}</div>
             </div>
           `;
-          grid.appendChild(tile);
+          grid.appendChild(thumb);
         });
     }
 
-    function openModal(game) {
+    function openViewer(game) {
       currentGame = game;
-      currentImgIndex = 0;
-      showCurrentImg();
-      modal.classList.add('open');
+      currentImageIndex = 0;
+      viewerImg.src = game.images[0];
+      viewerTitle.textContent = game.title;
+      viewer.showModal ? viewer.showModal() : viewer.setAttribute('open', '');
     }
 
-    function showCurrentImg() {
-      modalImg.src = currentGame.images[currentImgIndex];
-      modalCaption.textContent = `${currentGame.teams} - ${currentGame.date}`;
-    }
-
-    function nextImg() {
-      currentImgIndex = (currentImgIndex + 1) % currentGame.images.length;
-      showCurrentImg();
-    }
-
-    function prevImg() {
-      currentImgIndex =
-        (currentImgIndex - 1 + currentGame.images.length) %
-        currentGame.images.length;
-      showCurrentImg();
-    }
-
-    filters.addEventListener('click', (e) => {
-      if (e.target.classList.contains('filter-btn')) {
-        document
-          .querySelectorAll('.filter-btn')
-          .forEach(btn => btn.classList.remove('active'));
-        e.target.classList.add('active');
-        renderGrid(e.target.dataset.filter);
-      }
+    filters.addEventListener('click', e => {
+      if (!e.target.classList.contains('filter-btn')) return;
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      e.target.classList.add('active');
+      renderGrid(e.target.dataset.filter);
     });
 
-    closeBtn.onclick = () => modal.classList.remove('open');
-    prevBtn.onclick = prevImg;
-    nextBtn.onclick = nextImg;
-    modal.onclick = (e) => {
-      if (e.target === modal) modal.classList.remove('open');
-    };
+    document.getElementById('closeBtn').onclick = () => viewer.close();
+    viewer.onclick = e => { if (e.target === viewer) viewer.close(); };
+
+    document.querySelectorAll('input').forEach(inp => {
+      inp.onchange = () => inp.value = String(inp.value).replace(/[^0-9]/g, '') || '0';
+    });
 
     renderGrid();
   </script>
